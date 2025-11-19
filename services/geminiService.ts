@@ -1,13 +1,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, AnalysisStatus } from '../types';
 
-const API_KEY = process.env.API_KEY;
+// Safely access environment variables.
+// verified by vite.config.ts mapping
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set");
+  console.error("Missing VITE_API_KEY. Please check your .env file or environment variables.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 const analysisSchema = {
   type: Type.OBJECT,
@@ -40,9 +42,13 @@ const analysisSchema = {
 };
 
 export const analyzeInsulatorImage = async (base64Image: string, mimeType: string): Promise<AnalysisResult> => {
+  if (!ai) {
+    throw new Error("Gemini API Key is missing. Please configure VITE_API_KEY in your environment.");
+  }
+
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-2.5-flash', // Updated to recommended model for basic tasks/vision
       contents: {
         parts: [
           {
@@ -69,8 +75,14 @@ export const analyzeInsulatorImage = async (base64Image: string, mimeType: strin
       },
     });
 
-    const jsonString = response.text.trim();
-    const result = JSON.parse(jsonString) as AnalysisResult;
+    // Access text directly as per new SDK guidelines
+    const jsonString = response.text;
+    
+    if (!jsonString) {
+        throw new Error("No response text received from Gemini.");
+    }
+
+    const result = JSON.parse(jsonString.trim()) as AnalysisResult;
 
     // Basic validation
     if (Object.values(AnalysisStatus).includes(result.status)) {

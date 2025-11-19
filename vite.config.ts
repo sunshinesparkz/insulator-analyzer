@@ -9,9 +9,13 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    define: {
-      // Polyfill process.env.API_KEY so the code from services/geminiService.ts works on the client
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
+    server: {
+      port: 3000,
     },
+    define: {
+      // Map the system variable API_KEY (provided by AI Studio/Cloud) 
+      // to the VITE_API_KEY expected by the frontend code.
+      'import.meta.env.VITE_API_KEY': JSON.stringify(env.VITE_API_KEY || env.API_KEY),
+    }
   };
 });
