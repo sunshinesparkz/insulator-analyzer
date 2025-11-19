@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { AnalysisResult, AnalysisStatus, ConfidenceScores } from './types';
+import { AnalysisResult, AnalysisStatus } from './types';
 import { analyzeInsulatorImage } from './services/geminiService';
 import { CameraIcon, UploadIcon, AlertIcon, IdentificationIcon } from './components/Icons';
 import { Spinner } from './components/Spinner';
