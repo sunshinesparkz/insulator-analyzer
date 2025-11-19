@@ -8,6 +8,7 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 }
 
 // Create a single supabase client for interacting with your database
-export const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY) 
+// We explicitly check typeof to satisfy TypeScript that these are strings, not booleans
+export const supabase = (typeof SUPABASE_URL === 'string' && typeof SUPABASE_ANON_KEY === 'string') 
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
   : null;
