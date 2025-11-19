@@ -3,7 +3,7 @@ import { AnalysisResult, AnalysisStatus } from '../types';
 
 // Safely access environment variables.
 // verified by vite.config.ts mapping
-const API_KEY = import.meta.env.VITE_API_KEY;
+const API_KEY = (import.meta as any).env.VITE_API_KEY;
 
 if (!API_KEY) {
   console.error("Missing VITE_API_KEY. Please check your .env file or environment variables.");
