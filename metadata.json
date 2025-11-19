@@ -1,0 +1,7 @@
+{
+  "name": "Insulator Status Analyzer",
+  "description": "An application for patrol officers to analyze the condition of electrical insulators by taking a photo or uploading an image. The system identifies whether the insulator is normal, has experienced a flashover, or is broken.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
