@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { AnalysisResult, AnalysisStatus } from './types';
 import { analyzeInsulatorImage } from './services/geminiService';
+import { saveInspectionResult } from './services/databaseService';
 import { CameraIcon, UploadIcon, AlertIcon, IdentificationIcon } from './components/Icons';
 import { Spinner } from './components/Spinner';
 
@@ -132,8 +133,16 @@ export default function App() {
       if (!data) {
           throw new Error("Could not read file data.");
       }
+      
+      // 1. Perform AI Analysis
       const analysisResult = await analyzeInsulatorImage(data, mimeType);
       setResult(analysisResult);
+
+      // 2. Save result to Database (Fire and forget - don't await to block UI)
+      saveInspectionResult(analysisResult).catch(err => {
+          console.error("Background save failed:", err);
+      });
+
     } catch (err) {
       const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
       setError(`Analysis Failed: ${message}`);
@@ -213,7 +222,7 @@ export default function App() {
         />
       </main>
       <footer className="w-full max-w-2xl mx-auto text-center py-4 mt-6">
-        <p className="text-sm text-gray-500">Powered by Gemini Pro</p>
+        <p className="text-sm text-gray-500">Powered by Gemini Pro & Supabase</p>
       </footer>
     </div>
   );
